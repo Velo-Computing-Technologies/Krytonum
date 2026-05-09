@@ -5,6 +5,11 @@
 *.bin
 os_image.bin
 
+# x86_64 UEFI build artefacts
+*.elf
+*.iso
+build/
+iso_root/
 
 __pycache__/
 *.pyc

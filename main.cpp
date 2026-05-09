@@ -1,77 +1,92 @@
+/*
+ * Krytonium OS — kernel_main
+ *
+ * Entry point called by the x86_64 assembly stub (_start) after Limine
+ * has set up long mode, paging, and provided the UEFI framebuffer.
+ */
+
 #include "orion.h"
-#include "background.h"
+#include "limine.h"
+#include "ps2kbd.h"
+#include "net.h"
 
-static inline uint8_t port_byte_in(uint16_t port) {
-    uint8_t result;
-    __asm__("in %%dx, %%al" : "=a" (result) : "d" (port));
-    return result;
+/* -----------------------------------------------------------------------
+ * Limine protocol requests — must be in the ".requests" section so the
+ * bootloader can find them by scanning the kernel image.
+ * ----------------------------------------------------------------------- */
+
+/* Declare maximum protocol revision we support (revision 2) */
+LIMINE_BASE_REVISION(2);
+
+__attribute__((section(".requests")))
+static volatile struct limine_framebuffer_request fb_request = {
+    .id       = LIMINE_FRAMEBUFFER_REQUEST,
+    .revision = 0,
+    .response = 0,
+};
+
+__attribute__((section(".requests")))
+static volatile struct limine_hhdm_request hhdm_request = {
+    .id       = LIMINE_HHDM_REQUEST,
+    .revision = 0,
+    .response = 0,
+};
+
+/* -----------------------------------------------------------------------
+ * Simple busy-wait delay
+ * ----------------------------------------------------------------------- */
+static void delay_loop(unsigned long n)
+{
+    for (volatile unsigned long i = 0; i < n; i++) {}
 }
 
-static inline void port_byte_out(uint16_t port, uint8_t data) {
-    __asm__("out %%al, %%dx" : : "a" (data), "d" (port));
-}
-
-int mouse_x = 160, mouse_y = 100;
-uint8_t mouse_cycle = 0;
-int8_t mouse_byte[3];
-
-void init_ps2_mouse() {
-    port_byte_out(0x64, 0xA8);
-    port_byte_out(0x64, 0x20);
-    uint8_t status = port_byte_in(0x60) | 2;
-    port_byte_out(0x64, 0x60);
-    port_byte_out(0x60, status);
-    port_byte_out(0x64, 0xD4);
-    port_byte_out(0x60, 0xF6);
-    port_byte_in(0x60); 
-    port_byte_out(0x64, 0xD4);
-    port_byte_out(0x60, 0xF4);
-    port_byte_in(0x60); 
-}
-
-void poll_input() {
-    uint8_t status = port_byte_in(0x64);
-    if (status & 0x01) {
-        if (status & 0x20) { 
-            mouse_byte[mouse_cycle++] = port_byte_in(0x60);
-            if (mouse_cycle == 3) {
-                mouse_cycle = 0;
-                mouse_x += mouse_byte[1];
-                mouse_y -= mouse_byte[2];
-                if (mouse_x < 0) mouse_x = 0;
-                if (mouse_x > 318) mouse_x = 318;
-                if (mouse_y < 0) mouse_y = 0;
-                if (mouse_y > 198) mouse_y = 198;
-            }
-        } else {
-            port_byte_in(0x60); // Read keyboard so buffer doesn't fill
-        }
+/* -----------------------------------------------------------------------
+ * Kernel entry — called from _start in kernel_entry.asm
+ * ----------------------------------------------------------------------- */
+extern "C" void kernel_main(void)
+{
+    /* ------------------------------------------------------------------
+     * Initialise framebuffer from Limine response
+     * ------------------------------------------------------------------ */
+    if (fb_request.response && fb_request.response->framebuffer_count > 0) {
+        struct limine_framebuffer *fb =
+            fb_request.response->framebuffers[0];
+        fb_init(fb->address,
+                (uint32_t)fb->width,
+                (uint32_t)fb->height,
+                (uint32_t)fb->pitch,
+                fb->bpp);
     }
-}
 
-void render_home_screen() {
-    // Draw Background from Google Images
-    for (int i = 0; i < 320 * 200; i++) {
-        double_buffer[i] = bg_pixels[i];
-    }
-    
-    render_taskbar();
-    draw_logo(100, 30);
-
-    // Draw Mouse Cursor
-    draw_pixel(mouse_x, mouse_y, 15);
-    draw_pixel(mouse_x+1, mouse_y, 15);
-    draw_pixel(mouse_x, mouse_y+1, 15);
-    draw_pixel(mouse_x+1, mouse_y+1, 15);
-}
-
-extern "C" void kernel_main() {
+    /* ------------------------------------------------------------------
+     * System and peripheral initialisation
+     * ------------------------------------------------------------------ */
     init_system();
-    init_ps2_mouse();
+    ps2kbd_init();
+    net_init();      /* locate e1000, ARP setup etc. — non-fatal if absent */
 
+    /* ------------------------------------------------------------------
+     * Main loop
+     * ------------------------------------------------------------------ */
     while (true) {
-        poll_input();
-        render_home_screen(); // Or render_login_screen() if you want to test login first
+        /* Feed keystrokes to the active screen */
+        int ch = ps2kbd_poll();
+        if (ch != -1) {
+            if (!is_authenticated())
+                login_key(ch);
+        }
+
+        /* Process incoming network packets */
+        net_poll();
+
+        /* Render */
+        if (is_authenticated())
+            render_home_screen();
+        else
+            render_login_screen();
+
         flush_buffer_to_screen();
+
+        delay_loop(50000);   /* ~1 ms throttle to avoid busy-burning the CPU */
     }
 }
