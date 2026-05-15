@@ -10,3 +10,4 @@ void render_settings(void)
     draw_rect(70, 100, 180, 40, 15);  /* dependencies box */
     draw_text(75, 105, "Limine  e1000  TCP/IP", 1);
 }
+
