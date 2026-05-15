@@ -8,6 +8,8 @@ void render_app_view(void)
     draw_text(55, 43, "Application", 15);
 }
 
+
+
 void render_home_screen(void)
 {
     /* Clear to background colour */
