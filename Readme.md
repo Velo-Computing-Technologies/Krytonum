@@ -1,58 +1,56 @@
 # Krytonum OS
 
-A low-overhead, bare-metal system architecture engineered for direct hardware resource coordination and execution velocity.
+Krytonum is a long-term, multi-year R&D system engineering project focused on building an independent, minimal-overhead bare-metal execution architecture. 
 
 ---
 
-## 1. Project Status & Migration Notice
+## Project Paradigm & Horizon
 
-This project is undergoing a structural namespace and branding migration from its legacy working designation, `OrionOS`, to **Krytonum**. 
+This repository functions as an ongoing architectural workshop managed by **Velo Computing Technologies**. 
 
-* **Maintainer:** Velo Computing Technologies
-* **Status:** Active Core Development / Refactoring Phase
-* **Upstream Namespace Changes:** Legacy identifiers inside system configurations and header files are incrementally transitioning to the `krytonum` namespace.
-
----
-
-## 2. Technical Profile
-
-### Architecture and Kernel Strategy
-* **Design Philosophy:** Minimal hardware abstraction. Direct execution control without high-level wrapper frameworks.
-* **Target Platforms:** Bare-metal execution stacks, specialized low-latency computing contexts, and custom virtualized hypervisors.
-* **Boot Environment:** Multiboot compliant entry routines via the `Limine` engine infrastructure.
-
-### Component Map
-* **Core Runtime (`app.cpp`, `main.cpp`):** Handles baseline execution loops and system setup handoffs.
-* **Network Components (`e1000.cpp`, `http.cpp`):** Raw controller interaction loops for network interfaces paired with a structural `mbedtls` cryptographic integration sub-dependency.
-* **Subsystems (`pci.cpp`, `ps2kbd.cpp`):** Direct hardware interrogation routines via standard bus protocols and basic legacy peripheral drivers.
+* **Timeline Expectation:** This is a generational, foundational project with an estimated 5–10 year architectural evolution horizon. 
+* **Current Utility:** **Non-functional / Pre-alpha Structural Setup.** The code assets currently tracking in this repository represent initial bootstrapping tests, driver stubs (PCI, network links, keyboard), and runtime layout configurations. It is not currently runnable as a functional general-purpose computing platform.
+* **Migration Note:** Source configurations are gradually shifting namespaces from its initial baseline iteration identity, `OrionOS`, over to `Krytonum`.
 
 ---
 
-## 3. Toolchain & Build Environment
+## Long-Term Research Steps
 
-Compilation relies strictly on explicit file linkage scripts and native compiler toolchains.
+The development track is explicitly decoupled into long-range milestones:
 
-### Dependencies
-* **Compiler:** `gcc` setup configurations tuned for freestanding environment development (`-ffreestanding`).
-* **Assembler:** NASM compiler utility for early-stage processor preparation targets (`boot.asm`, `kernel_entry.asm`).
-* **Automation:** GNU Make (configured inside localized `Makefile`).
-* **Submodules:** `mbedtls` library (pinned configuration context).
+1. **Bootstrap Stability (Active Target):** Hardening early x86_64 target configuration profiles, testing interface layouts, and stabilizing compiler configurations inside the building matrix (`Makefile`, `linker.ld`, `asm` modules).
+2. **Subsystem Primitives:** Constructing memory allocation layout maps, validating hardware interface loops, and defining deterministic scheduler mechanics.
+3. **Hardware Direct IO:** Isolating low-latency driver stacks (leveraging early network mapping setups like `e1000.cpp` and basic packet handling frameworks).
 
-### Source Build Instructions
-Ensure your local system path includes an active ELF cross-compiler toolset before execution.
+---
+
+## Layout Reference
+
+* `/` — Project build coordination tools (`Makefile`, configurations)
+* `*.asm` — Processor stage entry procedures and low-level stack handling.
+* `*.cpp` / `*.h` — Freestanding driver abstractions, network configuration skeletons (`http`, `net`, `mbedtls` configurations), and basic video framing buffers (`orion.h`).
+
+---
+
+## Environment Setup
+
+Because the kernel compiles in a freestanding environment without native OS library ecosystems, changes require explicitly configured toolchains.
+
+### Required Utilities
+* **Assembler:** `nasm`
+* **Compiler Build Array:** `gcc` or `clang` targets configured for custom standalone compilation output.
+* **Automation Handler:** `make`
 
 ```bash
-# Clone the repository logic including sub-allocations
+# Clone repository blocks
 git clone --recursive https://github.com
 cd Krytonum
 
-# Trigger compilation pass via the Makefile infrastructure
+# Perform structural syntax parsing build checks
 make
 ```
 
 ---
 
-## 4. Operational Ecosystem
-
-* **Infrastructure Domain:** [velocomputing.tech](https://velocomputing.tech)
-* **Licensing Model:** MIT License (refer to individual `LICENSE` source files inside the repository root).
+## Legals & Scope
+Distributed under the open MIT License models. All development targets focus entirely on exploratory architecture primitives.
