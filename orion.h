@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 /*
+
  * -----------------------------------------------------------------------
  * Framebuffer initialisation — called once from kernel_main with the
  * address, dimensions, pitch and bpp provided by Limine.
