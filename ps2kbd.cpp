@@ -1,9 +1,9 @@
 /*
  * PS/2 keyboard driver (polling, no IRQ required).
  *
+ 
  * Works with the PS/2 controller present in both QEMU and on real PC
- * hardware (including Surface 4 with a USB keyboard bridged by firmware
- * to the legacy PS/2 interface via the i8042 compatibility layer).
+ * hardware.
  *
  * Only US QWERTY layout is handled; Shift and Caps-Lock are supported.
  */
