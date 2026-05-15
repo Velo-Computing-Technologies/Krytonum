@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+
+
 /* Read/write a 32-bit PCI configuration register */
 uint32_t pci_read32(uint8_t bus, uint8_t dev, uint8_t func, uint8_t off);
 void     pci_write32(uint8_t bus, uint8_t dev, uint8_t func,
