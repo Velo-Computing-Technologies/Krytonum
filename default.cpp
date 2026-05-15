@@ -10,3 +10,4 @@ void load_defaults(void)
     theme_taskbar_color = 8;
     theme_text_color    = 15;
 }
+
