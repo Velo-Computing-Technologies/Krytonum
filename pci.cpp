@@ -1,7 +1,6 @@
 /*
  * Minimal PCI configuration-space access using legacy I/O ports
  * (Port 0xCF8 = CONFIG_ADDRESS, 0xCFC = CONFIG_DATA).
- * Works for any x86 with a PCI host bridge (QEMU, Surface, etc.).
  */
 
 #include "pci.h"
