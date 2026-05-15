@@ -10,6 +10,5 @@ os_image.bin
 *.iso
 build/
 iso_root/
-
 __pycache__/
 *.pyc
