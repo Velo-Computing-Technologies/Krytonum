@@ -7,8 +7,7 @@
  *   - Polling only; no interrupts.
  *   - Checksums computed in software.
  *
- * Only the subset required to perform an HTTP POST to the ESP32 gateway
- * is implemented; full RFC compliance is intentionally out of scope.
+
  */
 
 #include "net.h"
