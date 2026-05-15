@@ -7,7 +7,7 @@
  * Static network configuration — adjust before building if needed.
  * On a real LAN the OS uses 192.168.1.100/24 with gateway 192.168.1.1.
  * In QEMU (user-mode networking) the OS is 10.0.2.15/24 with gw 10.0.2.2.
- * Change these to match your LAN when booting on the Surface 4.
+
  */
 #define NET_OUR_IP       0xC0A80164u  /* 192.168.1.100 */
 #define NET_GATEWAY_IP   0xC0A80101u  /* 192.168.1.1   */
