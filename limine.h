@@ -3,7 +3,6 @@
  * Provides the minimal set of features required by Krytonium:
  *   - Base revision declaration
  *   - Framebuffer request
- *   - Higher-half direct-map (HHDM) request
  */
 #ifndef LIMINE_H
 #define LIMINE_H
