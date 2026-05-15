@@ -19,3 +19,4 @@ uint16_t e1000_recv(void *buf, uint16_t max_len);
 extern uint8_t e1000_mac[6];
 
 #endif /* E1000_H */
+
