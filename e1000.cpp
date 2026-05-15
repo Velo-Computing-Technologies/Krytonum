@@ -295,3 +295,4 @@ uint16_t e1000_recv(void *buf, uint16_t max_len)
 
     return len;
 }
+
