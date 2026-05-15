@@ -8,6 +8,7 @@
  *   -mcmodel=kernel  -mno-red-zone  -mno-mmx  -mno-sse  -mno-sse2
  */
 
+
 ENTRY(_start)
 
 SECTIONS
